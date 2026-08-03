@@ -4,8 +4,8 @@ import frappe
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_accounting_dimensions,
 )
+from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
 from erpnext.accounts.doctype.payment_request.payment_request import get_gateway_details
-from erpnext.accounts.party import get_party_bank_account
 from frappe.utils import getdate
 
 from edu_quality.api.print_id_card import generate_permanent_id_cards
