@@ -17,6 +17,7 @@ export interface Student {
   enquired_class: string;
   blood_group: string;
   annual_income: string;
+  school_calendar_url?: string;
 }
 
 const useStudentList = ({ enabled }: { enabled?: boolean } = {}) => {
