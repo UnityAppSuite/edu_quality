@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Demo · Om Kale</title>
+  <style>
+    :root {
+      --bg: #0b141a;
+      --panel: #111b21;
+      --panel-2: #202c33;
+      --outgoing: #005c4b;
+      --incoming: #202c33;
+      --text: #e9edef;
+      --muted: #8696a0;
+      --accent: #25d366;
+      --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #0f1e25 0%, #0b141a 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .sidebar {
+      border-right: 1px solid var(--border);
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header,
+    .chat-header {
+      background: var(--panel-2);
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .title {
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .contact-card {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #2a3942;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: #d1d7db;
+      flex: 0 0 auto;
+    }
+    .contact-meta {
+      min-width: 0;
+      flex: 1;
+    }
+    .contact-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(37, 211, 102, 0.12);
+      color: #8ff0b0;
+      font-size: 12px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .sidebar-body {
+      padding: 14px 16px 20px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .chat {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 25% 20%, rgba(255,255,255,0.03), transparent 22%),
+        linear-gradient(180deg, rgba(17,27,33,0.94), rgba(11,20,26,0.98));
+    }
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-links a {
+      color: #cfe9ff;
+      text-decoration: none;
+      font-size: 13px;
+      margin-left: 12px;
+    }
+    .header-links a:hover { text-decoration: underline; }
+    .messages {
+      flex: 1;
+      padding: 22px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: auto;
+    }
+    .day-pill {
+      align-self: center;
+      background: rgba(17, 27, 33, 0.92);
+      border: 1px solid var(--border);
+      color: #d3d9dd;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+    .system-note {
+      align-self: center;
+      max-width: 680px;
+      background: rgba(255, 238, 186, 0.14);
+      border: 1px solid rgba(255, 238, 186, 0.22);
+      color: #ffe6a7;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .bubble {
+      max-width: min(72%, 700px);
+      padding: 10px 12px 8px;
+      border-radius: 10px;
+      line-height: 1.45;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+      position: relative;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+    .incoming { align-self: flex-start; background: var(--incoming); }
+    .outgoing { align-self: flex-end; background: var(--outgoing); }
+    .meta-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 11px;
+      color: rgba(233,237,239,0.72);
+    }
+    .composer {
+      border-top: 1px solid var(--border);
+      background: var(--panel-2);
+      padding: 14px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .composer .input {
+      flex: 1;
+      background: #2a3942;
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 14px;
+    }
+    .composer .send {
+      background: var(--accent);
+      color: #042f1d;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .bubble { max-width: 88%; }
+      .messages { padding: 18px 14px 20px; }
+      .chat-header { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="eyebrow">UAT Demo</div>
+        <div class="title">WhatsApp UI</div>
+        <div class="subtitle">Hard-coded demo screen for the System Manager demo walkthrough.</div>
+      </div>
+      <div class="contact-card">
+        <div class="avatar">OK</div>
+        <div class="contact-meta">
+          <div class="contact-name">Om Kale</div>
+          <div>
+            <span class="tag">Real lead journey</span>
+            <span class="tag">Demo-only WhatsApp view</span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-body">
+        This screen is intentionally mocked for the UAT demo so the prospect can see the expected conversation flow even though the native “Open in Whatsapp UI” path is broken on this site.
+      </div>
+    </aside>
+    <main class="chat">
+      <div class="chat-header">
+        <div class="header-left">
+          <div class="avatar">OK</div>
+          <div>
+            <div class="title" style="font-size:16px; margin:0;">Om Kale</div>
+            <div class="subtitle" style="margin-top:2px;">Lead · Walnut School at Shivane · Preferred mode: Chat</div>
+          </div>
+        </div>
+        <div class="header-links">
+          <a href="/app/lead/SH-LD-341237">Open lead</a>
+          <a href="/app/lead-dashboard">Lead dashboard</a>
+        </div>
+      </div>
+      <div class="messages">
+        <div class="day-pill">Wednesday, July 29, 2026</div>
+        <div class="system-note">Demo note: this is a scoped mock shown only from the demo lead button flow. It is not a live WhatsApp sync screen.</div>
+
+        <div class="bubble incoming">Hi, I wanted to understand the admission process for class 8 at Walnut Shivane.
+          <div class="meta-row"><span>9:42 AM</span></div>
+        </div>
+
+        <div class="bubble outgoing">Absolutely. I can help with class 8 admissions and the school visit flow. Would you like the fee structure first or a campus visit slot?
+          <div class="meta-row"><span>9:45 AM</span><span>✓✓</span></div>
+        </div>
+
+        <div class="bubble incoming">Please share the visit process. We are also comparing nearby schools.
+          <div class="meta-row"><span>9:47 AM</span></div>
+        </div>
+
+        <div class="bubble outgoing">Sure — the usual next step is a guided campus visit, student interaction, and a quick academic fit discussion. If you like the school after that, we move to document collection and admission confirmation.
+          <div class="meta-row"><span>9:50 AM</span><span>✓✓</span></div>
+        </div>
+
+        <div class="bubble incoming">Okay. We prefer WhatsApp updates rather than calls during work hours.
+          <div class="meta-row"><span>9:53 AM</span></div>
+        </div>
+
+        <div class="bubble outgoing">Noted. I’ve marked WhatsApp as the preferred communication mode for follow-ups on this lead.
+          <div class="meta-row"><span>9:54 AM</span><span>✓✓</span></div>
+        </div>
+
+        <div class="bubble outgoing">Next suggested action in CRM: follow up with school-visit options and class-8 admission context.
+          <div class="meta-row"><span>10:01 AM</span><span>✓✓</span></div>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="input">Message composer disabled in demo mode</div>
+        <div class="send">Demo view</div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

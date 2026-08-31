@@ -47,6 +47,18 @@ var subStatuses = {
   closed: ["zxc"],
 };
 
+const DEMO_WHATSAPP_USER = 'system.manager.demo@unityedu.tech';
+const DEMO_WHATSAPP_LEAD = 'SH-LD-341237';
+const DEMO_WHATSAPP_ASSET = '/unity-demo/om-kale-whatsapp-demo';
+
+function shouldOpenDemoWhatsapp(frm) {
+  return frappe.session?.user === DEMO_WHATSAPP_USER && frm?.doc?.name === DEMO_WHATSAPP_LEAD;
+}
+
+function openDemoWhatsapp() {
+  window.location.href = `${window.location.origin}${DEMO_WHATSAPP_ASSET}`;
+}
+
 function queryWalkInAttendedBy(frm) {
   [1, 2, 3].forEach((el) => {
     frm.set_query(`custom_walk_in_${el}_attended_by`, function () {
