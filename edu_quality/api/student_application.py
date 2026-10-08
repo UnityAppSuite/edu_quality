@@ -74,7 +74,10 @@ def is_dob_in_range(lead_application, program_doc):
 	dob = lead_application.get("date_of_birth")
 	end = program_doc.get("custom_date_end")
 	if not dob:
-		raise frappe.exceptions.MandatoryError("Date of Birth is required")
+		# DOB is optional on a Lead (Facebook leads arrive without it; the parent
+		# gives it in the Long Enquiry Form). With no DOB the age band cannot be
+		# checked, so it is skipped rather than refusing conversion.
+		return True
 	if not start or not end:
 		return True
 

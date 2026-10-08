@@ -5,7 +5,6 @@ var error_msg = {
   fathers_phone: "Father's phone number is required before proceeding ahead",
   class: "Class is required before proceeding ahead",
   fathers_email: "father's email id is required before proceeding ahead",
-  gender: "Gender is required before proceeding ahead",
 };
 
 var subStatuses = {
@@ -70,7 +69,7 @@ frappe.ui.form.on("Lead", {
     frm.set_intro(
       `
         <p class="text-dark my-0">
-            These fields are required before proceeding ahead:<ul><li>Academic Year</li><li> School</li><li>First Name</li><li>Date of Birth</li><li>Fathers Phone</li><li>Class</li><li>Fathers Email</li><li>Gender</li>
+            These fields are required before proceeding ahead:<ul><li>Academic Year</li><li> School</li><li>First Name</li><li>Fathers Phone</li><li>Class</li><li>Fathers Email</li>
 
       `,
       "orange"
