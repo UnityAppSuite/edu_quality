@@ -28,7 +28,12 @@ def get_google_folder_name_with_id(folder_id):
 	try:
 		if not folder_id:
 			return False
-		folder_exist = get_google_drive_object().files().get(fileId=folder_id, fields="name").execute()
+		folder_exist = (
+			get_google_drive_object()
+			.files()
+			.get(fileId=folder_id, fields="name", supportsAllDrives=True)
+			.execute()
+		)
 		return folder_exist
 	except Exception as e:
 		frappe.msgprint("Something Went Wrong")
@@ -54,7 +59,12 @@ def check_for_folder_in_google_drive(folder_name=None, root_folder=None):
 		}
 
 		try:
-			folder = google_drive.files().create(body=file_metadata, fields="id").execute().get("id")
+			folder = (
+				google_drive.files()
+				.create(body=file_metadata, fields="id", supportsAllDrives=True)
+				.execute()
+				.get("id")
+			)
 			backup_folder_exists = True
 			return folder
 
@@ -68,7 +78,9 @@ def check_for_folder_in_google_drive(folder_name=None, root_folder=None):
 		google_drive_folders = (
 			google_drive.files()
 			.list(
-				q=f"mimeType='application/vnd.google-apps.folder' and name='{encoded_folder_name}' and '{root_folder_id}' in parents"
+				q=f"mimeType='application/vnd.google-apps.folder' and name='{encoded_folder_name}' and '{root_folder_id}' in parents",
+				supportsAllDrives=True,
+				includeItemsFromAllDrives=True,
 			)
 			.execute()
 		)
@@ -106,7 +118,11 @@ def upload_file_to_drive(file_url, folder_name=None, root_folder=None, file_name
 
 	try:
 		media = MediaFileUpload(get_absolute_path(file_url), mimetype, resumable=True)
-		return google_drive.files().create(body=file_metadata, media_body=media, fields="id").execute()
+		return (
+			google_drive.files()
+			.create(body=file_metadata, media_body=media, fields="id", supportsAllDrives=True)
+			.execute()
+		)
 	except OSError as e:
 		frappe.throw(f"Google Drive - Could not locate - {e}")
 
@@ -124,7 +140,7 @@ def update_file_on_drive(file_url, file_id, file_name=None, mimetype="image/jpeg
 		media = MediaFileUpload(get_absolute_path(file_url), mimetype, resumable=True)
 		result = (
 			google_drive.files()
-			.update(fileId=file_id, body=file_metadata, media_body=media, fields="id")
+			.update(fileId=file_id, body=file_metadata, media_body=media, fields="id", supportsAllDrives=True)
 			.execute()
 		)
 		return result
@@ -156,10 +172,16 @@ def upload_file_stream_to_drive(
 	try:
 		media = MediaFileUpload(temp_file.name, mimetype=mimetype, resumable=True)
 		if not publish_progress:
-			result = google_drive.files().create(body=file_metadata, media_body=media, fields="id").execute()
+			result = (
+				google_drive.files()
+				.create(body=file_metadata, media_body=media, fields="id", supportsAllDrives=True)
+				.execute()
+			)
 			return result
 
-		result = google_drive.files().create(body=file_metadata, media_body=media, fields="id")
+		result = google_drive.files().create(
+			body=file_metadata, media_body=media, fields="id", supportsAllDrives=True
+		)
 		response = None
 		while response is None:
 			status, response = result.next_chunk()
@@ -190,7 +212,16 @@ def find_file_by_name_and_folder(file_name, root_folder_id):
 		encoded_file_name = generate_name_for_drive(file_name)
 		query = f"name='{encoded_file_name}' and '{root_folder_id}' in parents"
 
-		results = google_drive.files().list(q=query, fields="files(id, name)").execute()
+		results = (
+			google_drive.files()
+			.list(
+				q=query,
+				fields="files(id, name)",
+				supportsAllDrives=True,
+				includeItemsFromAllDrives=True,
+			)
+			.execute()
+		)
 		files = results.get("files", [])
 
 		if files:
@@ -225,13 +256,19 @@ def update_file_stream_on_drive(
 		if not publish_progress:
 			result = (
 				google_drive.files()
-				.update(fileId=file_id, body=file_metadata, media_body=media, fields="id")
+				.update(
+					fileId=file_id,
+					body=file_metadata,
+					media_body=media,
+					fields="id",
+					supportsAllDrives=True,
+				)
 				.execute()
 			)
 			return result
 
 		result = google_drive.files().update(
-			fileId=file_id, body=file_metadata, media_body=media, fields="id"
+			fileId=file_id, body=file_metadata, media_body=media, fields="id", supportsAllDrives=True
 		)
 
 		response = None
@@ -283,7 +320,7 @@ def schedule_delete_file_from_drive(file_id):
 def delete_file_from_drive(file_id):
 	try:
 		google_drive = get_google_drive_object()
-		google_drive.files().delete(fileId=file_id).execute()
+		google_drive.files().delete(fileId=file_id, supportsAllDrives=True).execute()
 	except Exception as e:
 		frappe.log_error("Error deleting folder ", str([e, "with id ", file_id]))
 		frappe.throw(f"Google Drive - Could not Delete - {e}")

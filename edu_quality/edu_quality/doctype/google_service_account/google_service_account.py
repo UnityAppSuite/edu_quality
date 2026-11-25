@@ -16,5 +16,14 @@ class GoogleServiceAccount(Document):
 def get_folder_list():
 	oauth_obj = GoogleServiceAccountAuth("drive")
 	google_drive_obj = oauth_obj.get_google_service_object()
-	folders = google_drive_obj.files().list(q="mimeType='application/vnd.google-apps.folder'").execute()
+	folders = (
+		google_drive_obj.files()
+		.list(
+			q="mimeType='application/vnd.google-apps.folder' and trashed=false",
+			supportsAllDrives=True,
+			includeItemsFromAllDrives=True,
+			pageSize=1000,
+		)
+		.execute()
+	)
 	return [f'{folder.get("name")}  id:  {folder.get("id")}' for folder in folders.get("files")]
